@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useDebounce } from "../features/CustomDebounce";
-
 interface Todo {
     id: number,
     task: string,
@@ -16,7 +15,6 @@ const Todo = () => {
     const [taskType, setTaskType] = useState("Add Task");
     const [taskId, setTaskId] = useState<number>(0);
     const [searchTerm, setSearchTerm] = useState<string>("");
-
 
     const handleTask = () => {
         if (taskType === "Add Task") {
@@ -44,17 +42,14 @@ const Todo = () => {
         setTodos(prev => prev.filter((todo) => todo.id !== id))
     }
 
-    const handleEditTask = (id: number) => {
-        const editTask = todos.find(item => item.id === id);
-        if (editTask) {
-            setTaskName(editTask.task)
-            setTaskType("Update")
-            setTaskId(id)
-        }
+    const handleEditTask = (id: number, task: string) => {
+        setTaskName(task)
+        setTaskType("Update")
+        setTaskId(id)
     }
 
     const debouncedSearchTerm = useDebounce(searchTerm, 1000);
-    const searchedTodos = todos.filter((todo) => todo.task.toLowerCase().includes(debouncedSearchTerm.toLocaleLowerCase()));
+    const searchedTodos = todos.filter((todo) => todo.task.toLocaleLowerCase().includes(debouncedSearchTerm.toLocaleLowerCase()));
     const filteredTodos = searchedTodos.filter(todo => {
         if (filter === "active") {
             return todo.isActive
@@ -80,12 +75,12 @@ const Todo = () => {
                 />
                 <button className=" p-1 bg-emerald-700 text-blue-100 cursor-pointer w-20" onClick={handleTask}>{taskType}</button>
             </div>
-            <div className="mt-10 border p-3">
+            <div className="mt-10 border p-3 rounded-sm bg-violet-50 border-gray-100">
                 <div className="mt-0 flex gap-2 justify-between p-1">
                     <input
                         type="search"
                         placeholder="search here.."
-                        className="border flex-3 p-2"
+                        className="border flex-3 p-2 bg-white"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -102,12 +97,12 @@ const Todo = () => {
                 <div className="mt-5 p-1">
                     <ul className="flex flex-col gap-4 max-h-96 overflow-y-auto scrollbar-thin">
                         {filteredTodos?.map((item) =>
-                            <li key={item.id} className="border p-2 flex flex-col gap-3 rounded-lg shadow-md hover:shadow-xl transition-shadow bg-violet-200">
+                            <li key={item.id} className="border p-2 flex flex-col gap-3 rounded-lg shadow-md hover:shadow-xl bg transition-shadow border-transparent bg-violet-200">
                                 <div className="font-medium text-xl">{item.task}</div>
                                 <div className="self-end flex gap-3 item-center">
                                     <button
                                         className="border p-1 w-30 cursor-pointer text-blue-50 bg-teal-600"
-                                        onClick={() => handleEditTask(item.id)}
+                                        onClick={() => handleEditTask(item.id, item.task)}
                                     >Edit</button>
                                     <button
                                         className="border p-1  w-30 cursor-pointer text-blue-50 bg-orange-600"
